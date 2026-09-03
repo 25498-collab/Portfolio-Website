@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 const hasBase44Config = Boolean(
   import.meta.env.VITE_BASE44_APP_ID && import.meta.env.VITE_BASE44_APP_BASE_URL
 );
+const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || "";
 
 export default function ContactCTA() {
   const [form, setForm] = useState({ name: "", email: "", business: "" });
@@ -20,10 +21,17 @@ export default function ContactCTA() {
     setSending(true);
     setError("");
     try {
-      if (!hasBase44Config) {
-        throw new Error("The contact form is not configured for this deployment yet.");
+      if (hasBase44Config) {
+        await base44.functions.invoke("sendContactRequest", { ...form, name, email });
+      } else if (contactEmail) {
+        const subject = encodeURIComponent(`New website enquiry from ${name}`);
+        const body = encodeURIComponent(
+          `Name: ${name}\nEmail: ${email}\nBusiness: ${form.business.trim() || "Not specified"}`
+        );
+        window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+      } else {
+        throw new Error("The contact email is not configured for this deployment yet.");
       }
-      await base44.functions.invoke("sendContactRequest", { ...form, name, email });
       setSent(true);
     } catch (err) {
       setError(err?.response?.data?.error || err.message || "Something went wrong — please try again.");

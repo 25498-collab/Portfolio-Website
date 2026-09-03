@@ -36,6 +36,7 @@ jobs:
           VITE_BASE44_APP_ID: ${{ secrets.VITE_BASE44_APP_ID }}
           VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
           VITE_BASE44_FUNCTIONS_VERSION: ${{ vars.VITE_BASE44_FUNCTIONS_VERSION || 'v1' }}
+          VITE_CONTACT_EMAIL: ${{ secrets.VITE_CONTACT_EMAIL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
