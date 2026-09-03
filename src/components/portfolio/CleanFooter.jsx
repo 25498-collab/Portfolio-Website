@@ -6,7 +6,7 @@ export default function CleanFooter() {
       <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="font-heading text-xl text-onyx">Website<span className="text-vermillion">.</span></p>
-          <p className="mt-1 text-sm text-onyx/50">Clean websites for small businesses — $400 flat.</p>
+          <p className="mt-1 text-sm text-onyx/50">Clean websites for small businesses — $200 flat.</p>
         </div>
         <div className="flex items-center gap-6 text-sm text-onyx/60">
           <a href="#work" className="hover:text-vermillion">Examples</a>

@@ -38,7 +38,7 @@ export default function ContactCTA() {
         <span className="font-mono-tech text-[11px] tracking-[0.15em] uppercase text-vermillion">Get started</span>
         <h2 className="mt-2 font-heading text-4xl leading-tight md:text-5xl">Let's build your website.</h2>
         <p className="mt-3 max-w-md text-gallery/60">
-          Tell me about your business and I'll reply within 48 hours with a plan. Flat $400 — finished in about a week.
+          Tell me about your business and I'll reply within 48 hours with a plan. Flat $200 — finished in about a week.
         </p>
 
         {sent ? (
@@ -55,7 +55,7 @@ export default function ContactCTA() {
             <Field label="Your business" value={form.business} onChange={update("business")} placeholder="e.g. A café, a salon, a trades business…" />
             {error && <p className="text-sm text-vermillion">{error}</p>}
             <button type="submit" disabled={sending} className="mt-2 inline-flex items-center justify-center rounded-full bg-vermillion px-7 py-3.5 text-sm font-medium text-gallery transition-opacity hover:opacity-90 disabled:opacity-50">
-              {sending ? "Sending…" : "Send my details — $400 site"}
+              {sending ? "Sending…" : "Send my details — $200 site"}
             </button>
           </form>
         )}

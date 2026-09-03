@@ -12,7 +12,7 @@ export default function Pricing() {
               <div>
                 <span className="font-mono-tech text-[11px] tracking-[0.15em] uppercase text-onyx/60">Flat price</span>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-heading text-6xl font-normal text-onyx">$400</span>
+                  <span className="font-heading text-6xl font-normal text-onyx">$200</span>
                   <span className="text-sm text-onyx/50">one-time</span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-onyx/60">
@@ -26,7 +26,7 @@ export default function Pricing() {
             </div>
             {/* right: what's covered */}
             <div className="p-8">
-              <p className="font-mono-tech text-[11px] tracking-[0.15em] uppercase text-onyx/60">Your $400 covers</p>
+              <p className="font-mono-tech text-[11px] tracking-[0.15em] uppercase text-onyx/60">Your $200 covers</p>
               <ul className="mt-4 space-y-3">
                 {[
                   "A custom 5-page website",
