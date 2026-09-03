@@ -2,8 +2,8 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
-  base: './',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/Portfolio-Website/' : '/',
   resolve: {
     alias: [
       { find: /^@\/api(\/.*)?$/, replacement: `${fileURLToPath(new URL('./src/api', import.meta.url))}$1` },
@@ -16,4 +16,4 @@ export default defineConfig({
   plugins: [
     react(),
   ]
-});
+}));
