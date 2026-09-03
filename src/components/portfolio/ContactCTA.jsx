@@ -1,23 +1,32 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 
+const hasBase44Config = Boolean(
+  import.meta.env.VITE_BASE44_APP_ID && import.meta.env.VITE_BASE44_APP_BASE_URL
+);
+
 export default function ContactCTA() {
   const [form, setForm] = useState({ name: "", email: "", business: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
-  const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const update = (key) => (e) => setForm((current) => ({ ...current, [key]: e.target.value }));
   const submit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email) return;
+    const name = form.name.trim();
+    const email = form.email.trim();
+    if (!name || !email) return;
     setSending(true);
     setError("");
     try {
-      await base44.functions.invoke("sendContactRequest", form);
+      if (!hasBase44Config) {
+        throw new Error("The contact form is not configured for this deployment yet.");
+      }
+      await base44.functions.invoke("sendContactRequest", { ...form, name, email });
       setSent(true);
     } catch (err) {
-      setError(err?.response?.data?.error || "Something went wrong — please try again.");
+      setError(err?.response?.data?.error || err.message || "Something went wrong — please try again.");
     } finally {
       setSending(false);
     }
