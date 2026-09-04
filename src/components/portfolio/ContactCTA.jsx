@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
 
-const hasBase44Config = Boolean(
-  import.meta.env.VITE_BASE44_APP_ID && import.meta.env.VITE_BASE44_APP_BASE_URL
-);
-const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || "";
+const contactEndpoint = import.meta.env.VITE_CONTACT_ENDPOINT || "";
+const fallbackRecipient = import.meta.env.VITE_CONTACT_EMAIL || "hello@example.com";
 
 export default function ContactCTA() {
   const [form, setForm] = useState({ name: "", email: "", business: "" });
@@ -12,29 +9,67 @@ export default function ContactCTA() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
-  const update = (key) => (e) => setForm((current) => ({ ...current, [key]: e.target.value }));
+  const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  const buildMailtoLink = (payload) => {
+    const subject = encodeURIComponent(`New website enquiry - ${payload.name}`);
+    const body = encodeURIComponent(
+      `New enquiry from your portfolio contact form.\n\n` +
+      `Name: ${payload.name}\n` +
+      `Email: ${payload.email}\n` +
+      `Business: ${payload.business || "(not specified)"}\n`
+    );
+
+    return `mailto:${fallbackRecipient}?subject=${subject}&body=${body}`;
+  };
+
   const submit = async (e) => {
     e.preventDefault();
+
     const name = form.name.trim();
     const email = form.email.trim();
-    if (!name || !email) return;
+    const business = form.business.trim();
+
+    if (!name || !email) {
+      setError("Please add your name and email so I can reply.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setSending(true);
     setError("");
+
+    const payload = { name, email, business };
+    const mailtoLink = buildMailtoLink(payload);
+
     try {
-      if (hasBase44Config) {
-        await base44.functions.invoke("sendContactRequest", { ...form, name, email });
-      } else if (contactEmail) {
-        const subject = encodeURIComponent(`New website enquiry from ${name}`);
-        const body = encodeURIComponent(
-          `Name: ${name}\nEmail: ${email}\nBusiness: ${form.business.trim() || "Not specified"}`
-        );
-        window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+      if (contactEndpoint) {
+        const response = await fetch(contactEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const details = await response.text().catch(() => "");
+          throw new Error(details || "Failed to send message.");
+        }
       } else {
-        throw new Error("The contact email is not configured for this deployment yet.");
+        window.location.href = mailtoLink;
       }
+
       setSent(true);
     } catch (err) {
-      setError(err?.response?.data?.error || err.message || "Something went wrong — please try again.");
+      const message = err?.message || "Something went wrong — please try again.";
+      setError(message);
+
+      if (!contactEndpoint) {
+        window.location.href = mailtoLink;
+      }
     } finally {
       setSending(false);
     }
